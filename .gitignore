@@ -1,0 +1,5 @@
+.idea
+
+/airflow-data/logs
+/docker-compose/airflow.env
+/docker-compose/airflow-backend.env

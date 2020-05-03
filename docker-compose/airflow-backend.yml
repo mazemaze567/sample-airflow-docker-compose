@@ -1,0 +1,26 @@
+version: '3'
+services:
+  redis:
+    image: "redis:4.0.10-alpine"
+    env_file:
+      - airflow-backend.env
+    ports:
+      - "6379:6379"
+  postgres:
+    image: "postgres:10.10-alpine"
+    env_file:
+      - airflow-backend.env
+    ports:
+      - "5432:5432"
+  webserver:
+    depends_on:
+      - postgres
+      - redis
+  scheduler:
+    depends_on:
+      - postgres
+      - redis
+  worker:
+    depends_on:
+      - postgres
+      - redis

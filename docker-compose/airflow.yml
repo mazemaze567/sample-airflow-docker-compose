@@ -1,0 +1,43 @@
+version: '3'
+services:
+  webserver:
+    image: "apache/airflow:1.10.10"
+    env_file:
+      - airflow.env
+    ports:
+      - "8080:8080"
+    entrypoint: "/bin/bash -c '/entrypoint upgradedb && sleep 20; /usr/bin/dumb-init -- /entrypoint webserver'"
+    volumes:
+      - $PWD/airflow-data/dags:/opt/airflow/dags:ro
+      - $PWD/airflow-data/logs:/opt/airflow/logs:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  scheduler:
+    image: "apache/airflow:1.10.10"
+    env_file:
+      - airflow.env
+    entrypoint: "/bin/bash -c 'sleep 30; /usr/bin/dumb-init -- /entrypoint scheduler'"
+    volumes:
+      - $PWD/airflow-data/dags:/opt/airflow/dags:ro
+      - $PWD/airflow-data/logs:/opt/airflow/logs:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  worker:
+    image: "apache/airflow:1.10.10"
+    env_file:
+      - airflow.env
+    entrypoint: "/bin/bash -c 'sleep 30; /usr/bin/dumb-init -- /entrypoint worker'"
+    volumes:
+      - $PWD/airflow-data/dags:/opt/airflow/dags:ro
+      - $PWD/airflow-data/logs:/opt/airflow/logs:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
